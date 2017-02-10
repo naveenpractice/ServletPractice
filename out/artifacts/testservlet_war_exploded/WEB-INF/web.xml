@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <servlet>
+        <servlet-name>LoginServ</servlet-name>
+        <servlet-class>LoginServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServ</servlet-name>
+        <url-pattern>/LoginServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>RegisterServ</servlet-name>
+        <servlet-class>RegisterServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServ</servlet-name>
+        <url-pattern>/RegisterServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>IssueServ</servlet-name>
+        <servlet-class>IssueServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>IssueServ</servlet-name>
+        <url-pattern>/IssueServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SolutionServ</servlet-name>
+        <servlet-class>SolutionServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SolutionServ</servlet-name>
+        <url-pattern>/SolutionServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LogoutServ</servlet-name>
+        <servlet-class>LogoutServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServ</servlet-name>
+        <url-pattern>/LogoutServ</url-pattern>
+    </servlet-mapping>
+</web-app>
