@@ -36,14 +36,34 @@
         <div class="form-group">
             <strong> Priority: </strong> ${param.priority}
         </div>
-          <strong> Solution: </strong>
-        <textarea col="100" rows="5" class="form-control" name="solution"
-                              id="solution">${param.solution}</textarea>
+        <c:choose>
+            <c:when test="${param.status == 'no' and param.usertype == 'Staff'}">
+                <div class="form-group">
+                    <strong> Solution: </strong>
+                    <div>
+            <textarea col="100" rows="5" class="form-control" name="solution"
+                      id="solution">${param.solution}</textarea>
+                    </div>
+                </div>
+            </c:when>
+            <c:when test="${param.status == 'yes'}">
+                <div class="form-group">
+                    <strong> Solution: </strong>
+                        ${param.solution}
+                </div>
+            </c:when>
 
+        </c:choose>
+        <c:choose>
+            <c:when test="${param.usertype == 'Staff' and param.status == 'no'}">
+                <div class="form-group">
                     <div>
                         <input type="hidden" name="id" value="${param.id}"/>
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>
+                </div>
+            </c:when>
+        </c:choose>
 
 
     </form>

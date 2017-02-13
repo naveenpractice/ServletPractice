@@ -1,10 +1,20 @@
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by naveen-pt1475 on 07-02-2017.
  */
 public class Issue implements Serializable {
     String id,title, type, description, issuetime, resolved, status, user, response, responsetime,priority;
+    String due_time;
+
+    public String getDue_time() {
+        return due_time;
+    }
+
+    public void setDue_time(String due_time) {
+        this.due_time = due_time;
+    }
 
     public String getPriority() {
         return priority;

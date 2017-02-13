@@ -18,9 +18,13 @@ public class DB {
         }
     }
 
-    public static DB getInstance() throws SQLException {
+    public static DB getInstance() {
         if (db == null) {
-            db = new DB();
+            try {
+                db = new DB();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return db;
     }
@@ -96,7 +100,7 @@ public class DB {
 
     }
 
-    public Map select(String table, String[] params, String condition, Object[] values) {
+    public Map select(String table, String[] params, String condition, Object[] values, String orderby) {
         Map<String, ArrayList<Object>> map = new LinkedHashMap<>();
         ArrayList<Object> list;
         String parameter = "";
@@ -110,11 +114,16 @@ public class DB {
         } else
             parameter = "*";
         try {
-            if (condition == null)
+            if (condition == null && orderby == null)
                 ps = con.prepareStatement("SELECT " + parameter + " FROM " + table);
-            else {
+            else if(condition!=null && orderby !=null) {
+                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " WHERE " + condition + " ORDER BY " + orderby + " DESC ");
+                ps = bindParams(ps, values);
+            } else if(condition !=null && orderby == null){
                 ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " WHERE " + condition);
                 ps = bindParams(ps, values);
+            }else{
+                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " ORDER BY " + orderby + " DESC ");
             }
             rs = ps.executeQuery();
 
@@ -164,6 +173,23 @@ public class DB {
 
     public void close() throws SQLException {
         this.con.close();
+    }
+
+    public String getAutoIncrementData() throws SQLException {
+        try {
+            ps = con.prepareStatement("SELECT `AUTO_INCREMENT`" +
+                    " FROM  INFORMATION_SCHEMA.TABLES" +
+                    " WHERE TABLE_SCHEMA = 'testdb'" +
+                    " AND TABLE_NAME   = 'issues'");
+           rs =  ps.executeQuery();
+           if(rs.next()){
+              return rs.getString(1);
+           }
+
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+        return null;
     }
 
 }

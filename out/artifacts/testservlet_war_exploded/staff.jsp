@@ -2,14 +2,16 @@
          pageEncoding="ISO-8859-1" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Refresh" content="10">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>Staff</title>
+    <title>User Details</title>
     <style>
         h3 {
             text-align: right;
@@ -52,17 +54,43 @@
             <th>Priority</th>
             <th>resolved</th>
             <th>Action</th>
+            <th>Due Date</th>
         </tr>
         </thead>
         <c:forEach var="issue" items="${sessionScope.issues}">
-            <tr class="success">
+            <jsp:useBean id="dateObject" class="java.util.Date"/>
+            <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate" pattern="EEE MMM dd HH:mm:ss zzz yyyy"/>
+            <c:choose>
+                <c:when test="${(parsedEmpDate.time - dateObject.time) > 60*60*24*1000}">
+                    <c:set value="success" var="cssClass"></c:set>
+                </c:when>
+                <c:when test="${(parsedEmpDate.time - dateObject.time) <= 60*60*24*1000}">
+                    <c:set value="warning" var="cssClass"></c:set>
+                </c:when>
+                <c:when test="${(parsedEmpDate.time - dateObject.time) < 0}">
+                    <c:set value="danger" var="cssClass"></c:set>
+                </c:when>
+                <c:otherwise>
+                    <c:set value="info" var="cssClass"></c:set>
+                </c:otherwise>
+            </c:choose>
+            <tr class="${cssClass}">
+
                 <td>${issue.user}</td>
                 <td>${issue.type}</td>
                 <td>${issue.title}</td>
-                <td>${issue.issuetime}</td>
+                <td><fmt:parseDate value="${issue.issuetime}" var="parsedEmpDate" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/></td>
                 <td>${issue.priority}</td>
                 <td>${issue.resolved}</td>
+                <td>
+                <td>
+                        <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate"
+                                       pattern="EEE MMM dd HH:mm:ss zzz yyyy"/>
+                        <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/>
 
+                <td>
+                </td>
                 <td>
                     <form action="issuedetails.jsp">
                         <input type="hidden" name="usertype" value="${user.type}"/>
@@ -83,7 +111,5 @@
         </c:forEach>
     </table>
 </div>
-
-
 </body>
 </html>

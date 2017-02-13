@@ -16,15 +16,22 @@ public class SolutionServ extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         List<Issue> issues;
+        Conversation conv = new Conversation();
         Issue issue = new Issue();
         String solution = request.getParameter("solution");
         String id = request.getParameter("id");
         issue.setId(id);
         issue.setResponse(solution);
         IssuedbHandler handler = new IssuedbHandler();
+
         boolean success = handler.setSolution(issue);
         if (success) {
             issues = (ArrayList<Issue>) handler.fetchIssues(null);
+            conv.setId(Integer.parseInt(id));
+            conv.setMessage(request.getParameter("solution"));
+            conv.setUser(request.getSession().getAttribute("username").toString());
+            ConvodbHandler convodbHandler = new ConvodbHandler();
+            convodbHandler.addMessage(conv);
             request.getSession().setAttribute("issues", issues);
             request.getRequestDispatcher("/staff.jsp").forward(request, response);
         } else

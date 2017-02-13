@@ -25,7 +25,7 @@ public class UserdbHandler {
             db = DB.getInstance();
             System.out.println("Authenticate: " + db.con.toString());
             Map<String, ArrayList<Object>> map;
-            map = db.select("details", null, "username=? and password=?", new Object[]{username, password});
+            map = db.select("details", null, "username=? and password=?", new Object[]{username, password},null);
             return map != null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class UserdbHandler {
         try {
             Map<String, ArrayList<Object>> map;
             db = DB.getInstance();
-            map = db.select("details", null, "username=?", new Object[]{username});
+            map = db.select("details", null, "username=?", new Object[]{username},null);
             if(map!=null){
                 user = new User();
                 user.setName(map.get("name").get(0).toString());
