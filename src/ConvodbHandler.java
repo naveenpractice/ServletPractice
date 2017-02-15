@@ -24,8 +24,10 @@ public class ConvodbHandler {
         try {
             Map<String, ArrayList<Object>> map;
             db = DB.getInstance();
-            map = db.select("conversation", null, "id=?", new Object[]{id}, "timestamp");
-            size = map.get("id").size();
+            System.out.println("CONVERSATION");
+            map = db.select("conversation", null, "id=?", new Object[]{String.valueOf(id)}, null);
+            System.out.println(map.get("id"));
+            size = map.get("user").size();
             System.out.println(size);
             for (int i = 0; i < size; i++) {
                 conv = new Conversation();
@@ -35,7 +37,6 @@ public class ConvodbHandler {
                 conv.setTimestamp((Date) (map.get("timestamp").get(i)));
                 convos.add(conv);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

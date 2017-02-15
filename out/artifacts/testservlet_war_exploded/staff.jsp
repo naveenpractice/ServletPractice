@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Refresh" content="10">
+    <meta http-equiv="Refresh" content="30">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -37,6 +37,13 @@
                 </button>
             </a>
         </c:when>
+        <c:otherwise>
+            <form action="/ReportServ" method="POST">
+                <button type="submit" class="left btn btn-success btn-sm">
+                    <span class="glyphicon glyphicon-plus"></span> Reports
+                </button>
+            </form>
+        </c:otherwise>
     </c:choose>
     <form action="LogoutServ" method="POST">
         <button type="submit" class="right btn btn-danger btn-sm">
@@ -49,17 +56,19 @@
         <tr>
             <th>User</th>
             <th>type</th>
+            <th>Product</th>
             <th>Title</th>
             <th>issued At</th>
             <th>Priority</th>
-            <th>resolved</th>
-            <th>Action</th>
             <th>Due Date</th>
+            <th>Resolved Time</th>
+            <th>Action</th>
+
         </tr>
         </thead>
         <c:forEach var="issue" items="${sessionScope.issues}">
             <jsp:useBean id="dateObject" class="java.util.Date"/>
-            <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate" pattern="EEE MMM dd HH:mm:ss zzz yyyy"/>
+            <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate" pattern="yyyy-MM-dd HH:mm:ss"/>
             <c:choose>
                 <c:when test="${(parsedEmpDate.time - dateObject.time) > 60*60*24*1000}">
                     <c:set value="success" var="cssClass"></c:set>
@@ -78,32 +87,32 @@
 
                 <td>${issue.user}</td>
                 <td>${issue.type}</td>
+                <td>${issue.product}</td>
                 <td>${issue.title}</td>
                 <td><fmt:parseDate value="${issue.issuetime}" var="parsedEmpDate" pattern="yyyy-MM-dd HH:mm:ss"/>
                     <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/></td>
                 <td>${issue.priority}</td>
-                <td>${issue.resolved}</td>
                 <td>
-                <td>
-                        <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate"
-                                       pattern="EEE MMM dd HH:mm:ss zzz yyyy"/>
-                        <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/>
-
-                <td>
+                    <fmt:parseDate value="${issue.due_time}" var="parsedEmpDate"
+                                   pattern="yyyy-MM-dd HH:mm:ss"/>
+                    <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/>
                 </td>
                 <td>
-                    <form action="issuedetails.jsp">
+                    <fmt:parseDate value="${issue.resolvedtime}" var="parsedEmpDate"
+                                   pattern="yyyy-MM-dd HH:mm:ss"/>
+                    <fmt:formatDate value="${parsedEmpDate}" pattern="MMM dd HH:mm:ss"/>
+                </td>
+                <td>
+                    <form action="ConversationServ" method="POST">
                         <input type="hidden" name="usertype" value="${user.type}"/>
+                        <input type="hidden" name="issue" value="${issue}"/>
                         <input type="hidden" name="id" value="${issue.id}"/>
                         <input type="hidden" name="user" value="${issue.user}"/>
                         <input type="hidden" name="type" value="${issue.type}"/>
                         <input type="hidden" name="title" value="${issue.title}"/>
                         <input type="hidden" name="priority" value="${issue.priority}"/>
-                        <input type="hidden" name="description" value="${issue.description}"/>
-                        <input type="hidden" name="solution" value="${issue.response}"/>
                         <input type="hidden" name="status" value="${issue.resolved}"/>
                         <input type="hidden" name="issuetime" value="${issue.issuetime}"/>
-                        <input type="hidden" name="responsetime" value="${issue.responsetime}"/>
                         <button class="btn btn-info" type="submit">View Details</button>
                     </form>
                 </td>

@@ -53,7 +53,6 @@ public class DB {
             try {
                 ps.close();
             } catch (Exception e) {
-
             }
         }
 
@@ -70,9 +69,16 @@ public class DB {
             }
         }
         try {
-            ps = con.prepareStatement("UPDATE " + table
-                    + " SET " + parameter + " WHERE " + condition);
-            ps = bindParams(ps, values);
+            if (values != null) {
+                ps = con.prepareStatement("UPDATE " + table
+                        + " SET " + parameter + " WHERE " + condition);
+                ps = bindParams(ps, values);
+
+            } else {
+                length = 0;
+                ps = con.prepareStatement("UPDATE " + table
+                        + " SET " + params[0] + " WHERE " + condition);
+            }
             for (int i = 0; i < conditionvalues.length; i++) {
                 String type = conditionvalues[i].getClass().getSimpleName();
                 if (type.equals("String")) {
@@ -96,8 +102,6 @@ public class DB {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     public Map select(String table, String[] params, String condition, Object[] values, String orderby) {
@@ -116,14 +120,15 @@ public class DB {
         try {
             if (condition == null && orderby == null)
                 ps = con.prepareStatement("SELECT " + parameter + " FROM " + table);
-            else if(condition!=null && orderby !=null) {
-                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " WHERE " + condition + " ORDER BY " + orderby + " DESC ");
+            else if (condition != null && orderby != null) {
+                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " WHERE " + condition + " ORDER BY " + orderby + " ASC ");
                 ps = bindParams(ps, values);
-            } else if(condition !=null && orderby == null){
+            } else if (condition != null && orderby == null) {
+                System.out.println(parameter + " " + table + " " + condition);
                 ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " WHERE " + condition);
                 ps = bindParams(ps, values);
-            }else{
-                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " ORDER BY " + orderby + " DESC ");
+            } else {
+                ps = con.prepareStatement("SELECT " + parameter + " FROM " + table + " ORDER BY " + orderby + " ASC ");
             }
             rs = ps.executeQuery();
 
@@ -133,11 +138,14 @@ public class DB {
             rs.beforeFirst();
 
             ResultSetMetaData rsmd = rs.getMetaData();
+            if (rsmd.getColumnCount() == 0)
+                return null;
             for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                 String name = rsmd.getColumnName(i);
                 list = new ArrayList<>();
                 while (rs.next()) {
-                    list.add(rs.getString(i));
+//                    System.out.println(rs.getObject(i));
+                    list.add(rs.getObject(i));
                 }
                 rs.beforeFirst();
                 map.put(name, list);
@@ -149,7 +157,6 @@ public class DB {
                 ps.close();
                 rs.close();
             } catch (Exception e) {
-
             }
         }
         return map;
@@ -159,6 +166,7 @@ public class DB {
         for (int i = 0; i < values.length; i++) {
             String type = values[i].getClass().getSimpleName();
             if (type.equals("String")) {
+                System.out.println(i + 1 + " " + String.valueOf(values[i]));
                 ps.setString(i + 1, String.valueOf(values[i]));
             }
             if (type.equals("Integer")) {
@@ -175,16 +183,17 @@ public class DB {
         this.con.close();
     }
 
-    public String getAutoIncrementData() throws SQLException {
+    public String getAutoIncrementData(String table) {
         try {
             ps = con.prepareStatement("SELECT `AUTO_INCREMENT`" +
                     " FROM  INFORMATION_SCHEMA.TABLES" +
                     " WHERE TABLE_SCHEMA = 'testdb'" +
-                    " AND TABLE_NAME   = 'issues'");
-           rs =  ps.executeQuery();
-           if(rs.next()){
-              return rs.getString(1);
-           }
+                    " AND TABLE_NAME   = ?");
+            ps.setString(1 , table);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString(1);
+            }
 
         } catch (SQLException e1) {
             e1.printStackTrace();

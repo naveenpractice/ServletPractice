@@ -22,32 +22,39 @@ public class IssueServ extends HttpServlet {
         List<Issue> issues;
         Conversation conv = new Conversation();
         Issue issue = new Issue();
+
         String type = request.getParameter("type");
         String title = request.getParameter("title");
-        String description = request.getParameter("description");
         String priority = request.getParameter("priority");
+        String product = request.getParameter("product");
+
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
+
         switch(priority){
             case "low": c.add(Calendar.DATE, 7); break;
             case "medium": c.add(Calendar.DATE, 3); break;
             case "high": c.add(Calendar.DATE, 1); break;
         }
-        issue.setDue_time(c.getTime().toString());
+
+        issue.setDue_time(c.getTime());
         issue.setTitle(title);
         issue.setType(type);
+        issue.setProduct(product);
         issue.setPriority(priority);
-        issue.setDescription(description);
         issue.setUser(request.getSession().getAttribute("username").toString());
+
         IssuedbHandler handler = new IssuedbHandler();
         String auto = handler.getAutoIncrementData();
-        System.out.println("AUTO:" + auto);
         boolean success = handler.storeIssue(issue);
+
         conv.setId(Integer.parseInt(auto));
         conv.setMessage(request.getParameter("description"));
         conv.setUser(request.getSession().getAttribute("username").toString());
+
         ConvodbHandler convodbHandler = new ConvodbHandler();
         convodbHandler.addMessage(conv);
+
         if (success) {
             if (request.getSession().getAttribute("usertype").equals("Customer"))
                 issues = (ArrayList<Issue>) handler.fetchIssues(request.getSession().getAttribute("username").toString());
@@ -55,7 +62,6 @@ public class IssueServ extends HttpServlet {
                 issues = (ArrayList<Issue>) handler.fetchIssues(null);
             request.getSession().setAttribute("issues", issues);
             response.sendRedirect("/staff.jsp");
-
         } else
             out.print("failed");
 

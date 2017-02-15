@@ -6,7 +6,16 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     String name, email, username, password, type;
-    int age;
+
+    public int getIssues_resolved() {
+        return issues_resolved;
+    }
+
+    public void setIssues_resolved(int issues_resolved) {
+        this.issues_resolved = issues_resolved;
+    }
+
+    int age,issues_resolved;
 
     public User() {
 

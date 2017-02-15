@@ -29,18 +29,34 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>SolutionServ</servlet-name>
-        <servlet-class>SolutionServ</servlet-class>
+        <servlet-class>MessageServ</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SolutionServ</servlet-name>
-        <url-pattern>/SolutionServ</url-pattern>
+        <url-pattern>/MessageServ</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>LogoutServ</servlet-name>
-        <servlet-class>LogoutServ</servlet-class>
-    </servlet>
+    <servlet-name>LogoutServ</servlet-name>
+    <servlet-class>LogoutServ</servlet-class>
+</servlet>
     <servlet-mapping>
         <servlet-name>LogoutServ</servlet-name>
         <url-pattern>/LogoutServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ConversationServ</servlet-name>
+        <servlet-class>ConversationServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ConversationServ</servlet-name>
+        <url-pattern>/ConversationServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReportServ</servlet-name>
+        <servlet-class>ReportServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReportServ</servlet-name>
+        <url-pattern>/ReportServ</url-pattern>
     </servlet-mapping>
 </web-app>

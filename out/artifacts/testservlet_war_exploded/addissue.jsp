@@ -27,6 +27,17 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label" for="product">Issue Title:</label>
+            <div>
+                <select name="product" id="product">
+                    <option value="Zoho Mail">Zoho Mail</option>
+                    <option value="Zoho People">Zoho People</option>
+                    <option value="SDP">SDP</option>
+                    <option value="Zoho Desk">Zoho Desk</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="control-label" for="title">Issue Title:</label>
             <div>
                 <input type="text" class="form-control" name="title" id="title">

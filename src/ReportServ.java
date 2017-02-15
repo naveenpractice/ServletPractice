@@ -1,0 +1,116 @@
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by naveen-pt1475 on 14-02-2017.
+ */
+@WebServlet(name = "ReportServ")
+public class ReportServ extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String lowmean = "", midmean = "", highmean = "";
+        long totallow = 0, totalmid = 0, totalhigh = 0;
+        int lowcount = 0, midcount = 0, highcount = 0, mail = 0, people = 0, desk = 0, sdp = 0, issuecount = 0, resolved = 0;
+        Date issuetime, resolvedtime;
+        ArrayList<Object> issues, users;
+        IssuedbHandler issuedbHandler = new IssuedbHandler();
+        issues = (ArrayList<Object>) issuedbHandler.fetchIssues(null);
+        UserdbHandler userdbHandler = new UserdbHandler();
+        users = userdbHandler.fetchUsers("Staff");
+        for (int i = 0; i < issues.size(); i++) {
+            issuetime = ((Issue) issues.get(i)).getIssuetime();
+            Calendar c = Calendar.getInstance();
+            Calendar c1 = Calendar.getInstance();
+            c.setTime(new Date());
+            c.add(Calendar.DATE, -7);
+            c1.setTime(issuetime);
+            int diff = c1.compareTo(c);
+            resolvedtime = ((Issue) issues.get(i)).getResolvedtime();
+            if (diff == 1) {
+                issuecount++;
+                if (((Issue) issues.get(i)).getResolved().equals("yes")) {
+                    resolved++;
+                }
+            }
+
+            if (issuetime != null && resolvedtime != null) {
+                switch (((Issue) issues.get(i)).getPriority()) {
+                    case "low":
+                        lowcount++;
+                        totallow += Math.abs(resolvedtime.getTime() - issuetime.getTime());
+                        break;
+                    case "medium":
+                        midcount++;
+                        totalmid += Math.abs(resolvedtime.getTime() - issuetime.getTime());
+                        break;
+                    case "high":
+                        highcount++;
+                        totalhigh += Math.abs(resolvedtime.getTime() - issuetime.getTime());
+                        break;
+                }
+
+            }
+            switch (((Issue) issues.get(i)).getProduct()) {
+                case "Zoho Mail":
+                    mail++;
+                    break;
+                case "Zoho People":
+                    people++;
+                    break;
+                case "Zoho Desk":
+                    desk++;
+                    break;
+                case "SDP":
+                    sdp++;
+                    break;
+            }
+
+        }
+        if (lowcount != 0)
+            lowmean = String.format("%02d min, %02d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount),
+                    TimeUnit.MILLISECONDS.toSeconds(totallow / lowcount) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount))
+            );
+        if (midcount != 0)
+            midmean = String.format("%02d min, %02d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount),
+                    TimeUnit.MILLISECONDS.toSeconds(totalmid / midcount) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount))
+            );
+        if (highcount != 0)
+            highmean = String.format("%02d min, %02d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount),
+                    TimeUnit.MILLISECONDS.toSeconds(totalhigh / highcount) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount))
+            );
+
+        request.getSession().setAttribute("lowmean", lowmean);
+        request.getSession().setAttribute("midmean", midmean);
+        request.getSession().setAttribute("highmean", highmean);
+        request.getSession().setAttribute("lowcount", lowcount);
+        request.getSession().setAttribute("midcount", midcount);
+        request.getSession().setAttribute("highcount", highcount);
+        request.getSession().setAttribute("mail", mail);
+        request.getSession().setAttribute("desk", desk);
+        request.getSession().setAttribute("people", people);
+        request.getSession().setAttribute("sdp", sdp);
+        request.getSession().setAttribute("users", users);
+        request.getSession().setAttribute("issuecount", issuecount);
+        request.getSession().setAttribute("resolved", resolved);
+        request.getSession().setAttribute("unresolved", issuecount - resolved);
+
+        response.sendRedirect("/report.jsp");
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
+}

@@ -5,14 +5,30 @@ import java.util.Date;
  * Created by naveen-pt1475 on 07-02-2017.
  */
 public class Issue implements Serializable {
-    String id,title, type, description, issuetime, resolved, status, user, response, responsetime,priority;
-    String due_time;
+    String id,title, type, resolved, status, user,priority,product;
+    Date issuetime,resolvedtime,due_time;
 
-    public String getDue_time() {
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public Date getResolvedtime() {
+        return resolvedtime;
+    }
+
+    public void setResolvedtime(Date resolvedtime) {
+        this.resolvedtime = resolvedtime;
+    }
+
+    public Date getDue_time() {
         return due_time;
     }
 
-    public void setDue_time(String due_time) {
+    public void setDue_time(Date due_time) {
         this.due_time = due_time;
     }
 
@@ -48,19 +64,11 @@ public class Issue implements Serializable {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIssuetime() {
+    public Date getIssuetime() {
         return issuetime;
     }
 
-    public void setIssuetime(String issuetime) {
+    public void setIssuetime(Date issuetime) {
         this.issuetime = issuetime;
     }
 
@@ -88,19 +96,4 @@ public class Issue implements Serializable {
         this.user = user;
     }
 
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
-    public String getResponsetime() {
-        return responsetime;
-    }
-
-    public void setResponsetime(String responsetime) {
-        this.responsetime = responsetime;
-    }
 }
