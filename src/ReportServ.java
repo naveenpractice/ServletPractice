@@ -1,12 +1,12 @@
+import com.google.gson.Gson;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,10 +15,13 @@ import java.util.concurrent.TimeUnit;
 @WebServlet(name = "ReportServ")
 public class ReportServ extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
         String lowmean = "", midmean = "", highmean = "";
         long totallow = 0, totalmid = 0, totalhigh = 0;
         int lowcount = 0, midcount = 0, highcount = 0, mail = 0, people = 0, desk = 0, sdp = 0, issuecount = 0, resolved = 0;
         Date issuetime, resolvedtime;
+        Gson gson = new Gson();
+        Map map = new HashMap();
         ArrayList<Object> issues, users;
         IssuedbHandler issuedbHandler = new IssuedbHandler();
         issues = (ArrayList<Object>) issuedbHandler.fetchIssues(null);
@@ -29,8 +32,8 @@ public class ReportServ extends HttpServlet {
             Calendar c = Calendar.getInstance();
             Calendar c1 = Calendar.getInstance();
             c.setTime(new Date());
-            c.add(Calendar.DATE, -7);
             c1.setTime(issuetime);
+            c.add(Calendar.DATE, -7);
             int diff = c1.compareTo(c);
             resolvedtime = ((Issue) issues.get(i)).getResolvedtime();
             if (diff == 1) {
@@ -71,43 +74,47 @@ public class ReportServ extends HttpServlet {
                     sdp++;
                     break;
             }
-
         }
         if (lowcount != 0)
-            lowmean = String.format("%02d min, %02d sec",
-                    TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount),
+            lowmean = String.format("%02dhrs %02dmins %02dsec",
+                    TimeUnit.MILLISECONDS.toHours(totallow / lowcount),
+                    TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totallow / lowcount)),
                     TimeUnit.MILLISECONDS.toSeconds(totallow / lowcount) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount))
-            );
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totallow / lowcount)));
+
         if (midcount != 0)
-            midmean = String.format("%02d min, %02d sec",
-                    TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount),
+            midmean = String.format("%02dhrs %02dmins %02dsec",
+                    TimeUnit.MILLISECONDS.toHours(totalmid / midcount),
+                    TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totalmid / midcount)),
                     TimeUnit.MILLISECONDS.toSeconds(totalmid / midcount) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount))
-            );
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalmid / midcount)));
+
         if (highcount != 0)
-            highmean = String.format("%02d min, %02d sec",
-                    TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount),
+            highmean = String.format("%02dhrs %02dmins %02dsec",
+                    TimeUnit.MILLISECONDS.toHours(totalhigh / highcount),
+                    TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totalhigh / highcount)),
                     TimeUnit.MILLISECONDS.toSeconds(totalhigh / highcount) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount))
-            );
-
-        request.getSession().setAttribute("lowmean", lowmean);
-        request.getSession().setAttribute("midmean", midmean);
-        request.getSession().setAttribute("highmean", highmean);
-        request.getSession().setAttribute("lowcount", lowcount);
-        request.getSession().setAttribute("midcount", midcount);
-        request.getSession().setAttribute("highcount", highcount);
-        request.getSession().setAttribute("mail", mail);
-        request.getSession().setAttribute("desk", desk);
-        request.getSession().setAttribute("people", people);
-        request.getSession().setAttribute("sdp", sdp);
-        request.getSession().setAttribute("users", users);
-        request.getSession().setAttribute("issuecount", issuecount);
-        request.getSession().setAttribute("resolved", resolved);
-        request.getSession().setAttribute("unresolved", issuecount - resolved);
-
-        response.sendRedirect("/report.jsp");
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalhigh / highcount)));
+        map.put("lowmean", lowmean);
+        map.put("midmean", midmean);
+        map.put("highmean", highmean);
+        map.put("lowcount", lowcount);
+        map.put("midcount", midcount);
+        map.put("highcount", highcount);
+        map.put("mail", mail);
+        map.put("desk", desk);
+        map.put("people", people);
+        map.put("sdp", sdp);
+        map.put("users", users);
+        map.put("issues", issues);
+        map.put("issuecount", issuecount);
+        map.put("resolved", resolved);
+        map.put("unresolved", issuecount - resolved);
+        System.out.println(gson.toJson(map));
+        response.getWriter().write(gson.toJson(map));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

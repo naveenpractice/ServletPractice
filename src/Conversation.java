@@ -9,6 +9,12 @@ public class Conversation implements Serializable {
     int id;
     String user,message;
     Date timestamp;
+    public Conversation(){}
+    public Conversation(int id, String user, String message) {
+        this.id = id;
+        this.user = user;
+        this.message = message;
+    }
 
     public Date getTimestamp() {
         return timestamp;

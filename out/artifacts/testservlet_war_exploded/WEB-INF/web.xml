@@ -33,7 +33,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>SolutionServ</servlet-name>
-        <url-pattern>/MessageServ</url-pattern>
+        <url-pattern>/SolutionServ</url-pattern>
     </servlet-mapping>
     <servlet>
     <servlet-name>LogoutServ</servlet-name>
@@ -58,5 +58,21 @@
     <servlet-mapping>
         <servlet-name>ReportServ</servlet-name>
         <url-pattern>/ReportServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DetailsServ</servlet-name>
+        <servlet-class>DetailsServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DetailsServ</servlet-name>
+        <url-pattern>/DetailsServ</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CloseIssueServ</servlet-name>
+        <servlet-class>CloseIssueServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CloseIssueServ</servlet-name>
+        <url-pattern>/CloseIssueServ</url-pattern>
     </servlet-mapping>
 </web-app>

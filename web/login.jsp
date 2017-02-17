@@ -11,10 +11,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>Customer details</title>
+
+    <script>
+        $(document).ready(function () {
+            $("button").click(function () {
+                var user = $("#username").val()
+                var pass = $("#password").val()
+                $.post('LoginServ', {username: user, password: pass}, function (responseText) {
+                    if (responseText.valid == "true") {
+                        window.location.replace("/details.jsp")
+                    } else
+                        alert("Invalid Username/Password");
+                })
+            })
+        });
+    </script>
 </head>
 <body background="http://bgfons.com/upload/paper_texture327.jpg">
 <div class="container-fluid">
-    <form class="form-horizontal col-md-4" action="LoginServ" method="POST">
+    <div class="form-horizontal col-md-4">
         <div class="form-group">
             <label class="control-label" for="username">Username:</label>
             <div>
@@ -29,12 +44,11 @@
         </div>
         <div class="form-group">
             <div>
-                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="button" class="btn btn-success">Submit</button>
                 if not registered, <a href="register.jsp">register here</a>
             </div>
         </div>
-    </form>
+    </div>
 </div>
-</form>
 </body>
 </html>

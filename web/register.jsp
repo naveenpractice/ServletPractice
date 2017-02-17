@@ -13,21 +13,42 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
-        function validate() {
-            var pass = document.regform.password.value;
-            var repass = document.regform.repassword.value;
-           if(pass!=repass){
-               alert("Passwords do not match");
-               return false;
-           } else{
-               return true;
-           }
-        }
+        $(document).ready(function () {
+            $("button").click(function () {
+                var name = $("#name").val()
+                var age = $("#age").val()
+                var email = $('#email').val()
+                var user = $('#username').val()
+                var pass = $('#password').val()
+                var repass = $('#repassword').val()
+                var type = $("input[name='type']:checked").val()
+                if (pass != repass) {
+                    alert('Passwords do not match')
+                } else {
+                    $.post('RegisterServ', {
+                        name: name,
+                        age: age,
+                        email: email,
+                        user: user,
+                        pass: pass,
+                        type: type
+                    }, function (responseText) {
+                        if (responseText.success == "true") {
+                            alert("Registration Successful")
+                            window.location.replace("/login.jsp")
+                        } else
+                            alert("Error");
+                    })
+                }
+            })
+        })
+
+
     </script>
 </head>
 <body background="http://bgfons.com/upload/paper_texture327.jpg">
 <div class="container-fluid">
-    <form onsubmit="return(validate());" name="regform" class="form-horizontal col-md-4" action="RegisterServ" method="POST">
+    <div class="form-horizontal col-md-4">
         <div class="form-group">
             <label class="control-label" for="name">Name:</label>
             <div>
@@ -84,11 +105,11 @@
 
         <div class="form-group">
             <div>
-                <button onclick="validate()" type="submit" class="btn btn-success">Submit</button>
+                <button type="button" class="btn btn-success">Submit</button>
                 Already signed up <a href="login.jsp">Login here</a>
             </div>
         </div>
-    </form>
+    </div>
 </div>
 </body>
 </html>

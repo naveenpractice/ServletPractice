@@ -25,15 +25,44 @@
             width: 100%;
         }
     </style>
+    <script>
+        $(document).ready(function () {
+            $.post('ReportServ', {}, function (json) {
+                $("#low").append("<td>" + json.lowcount + "</td>" + "<td>" + json.lowmean + "</td>")
+                $("#mid").append("<td>" + json.midcount + "</td>" + "<td>" + json.midmean + "</td>")
+                $("#high").append("<td>" + json.highcount + "</td>" + "<td>" + json.highmean + "</td>")
+                $("#mail").append("<td>" + json.mail + "</td>")
+                $("#people").append("<td>" + json.people + "</td>")
+                $("#desk").append("<td>" + json.desk + "</td>")
+                $("#sdp").append("<td>" + json.sdp + "</td>")
+                $("#issuecount").append("<td>" + json.issuecount + "</td>")
+                $("#resolved").append("<td>" + json.resolved + "</td>")
+                $("#pending").append("<td>" + json.unresolved + "</td>")
+
+                $.each(json.users, function (index, user) {
+                    var issues_resolved;
+                    if (user.issues_resolved != null)
+                        issues_resolved = user.issues_resolved
+                    else
+                        issues_resolved = 0
+                    $("#tbody").append("<tr class='info'>" +
+                        "<td> " + user.name + "</td>" +
+                        "<td> " + issues_resolved + "</td>" +
+                        "</tr>")
+                })
+            })
+            $("#back").click(function () {
+                window.location.replace("/details.jsp")
+            })
+        })
+    </script>
 </head>
 <body background="http://bgfons.com/upload/paper_texture327.jpg">
 <div>
-    <a href="/staff.jsp">
-        <button type="button" class="btn btn-warning btn-sm">
+        <button id="back" type="submit" class="btn btn-warning btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>BACK
         </button>
-        <br>
-    </a>
+    <br>
 </div>
 <div class="contents">
     <div class="col-md-6 quarter">
@@ -41,26 +70,23 @@
         <table border=1 class="table table-fixed">
             <thead class="thead-default">
             <tr class="info">
-            <th>Priority</th>
-            <th>Total Resolved issues</th>
-            <th>mean time to resolve</th>
+                <th>Priority</th>
+                <th>Total Resolved issues</th>
+                <th>mean time to resolve</th>
             </tr>
             </thead>
             <tbody>
-            <tr class="info">
+            <tr id="low" class="info">
                 <td>low</td>
-                <td>${lowcount}</td>
-                <td>${lowmean}</td>
+
             </tr>
-            <tr class="info">
+            <tr id="mid" class="info">
                 <td>mid</td>
-                <td>${midcount}</td>
-                <td>${midmean}</td>
+
             </tr>
-            <tr class="info">
+            <tr id="high" class="info">
                 <td>high</td>
-                <td>${highcount}</td>
-                <td>${highmean}</td>
+
             </tr>
             </tbody>
         </table>
@@ -70,67 +96,49 @@
         <table border=1 class="table table-hover">
             <thead class="thead-default">
             <tr class="info">
-            <th>Product</th>
-            <th>Issues</th>
+                <th>Product</th>
+                <th>Issues</th>
             </tr>
             </thead>
-            <tr class="info">
+            <tr id="mail" class="info">
                 <td>Zoho Mail</td>
-                <td>${mail}</td>
             </tr>
-            <tr class="info">
+            <tr id="people" class="info">
                 <td>Zoho People</td>
-                <td>${people}</td>
             </tr>
-            <tr class="info">
+            <tr id="desk" class="info">
                 <td>Zoho Desk</td>
-                <td>${desk}</td>
             </tr>
-            <tr class="info">
+            <tr id="sdp" class="info">
                 <td>SDP</td>
-                <td>${sdp}</td>
             </tr>
         </table>
     </div>
     <div class="col-md-6 quarter">
         <strong>RECENT ACTIVITY(LAST 7 DAYS)</strong>
         <table border=1 class="table table-hover">
-            <tr class="info">
+            <tr id="issuecount" class="info">
                 <td>Total Issues</td>
-                <td>${issuecount}</td>
             </tr>
-            <tr class="info">
+            <tr id="resolved" class="info">
                 <td>Issues resolved</td>
-                <td>${resolved}</td>
             </tr>
-            <tr class="info">
+            <tr id="pending" class="info">
                 <td>Issues Pending</td>
-                <td>${unresolved}</td>
             </tr>
         </table>
     </div>
     <div class="col-md-6 quarter">
         <strong>STAFF DETAILS</strong>
         <table border=1 class="table table-hover">
-            <thead  class="thead-default">
+            <thead class="thead-default">
             <tr class="info">
-            <th> Staff Name </th>
-            <th> Resolved Issues</th>
+                <th> Staff Name</th>
+                <th> Resolved Issues</th>
             </tr>
             </thead>
-            <c:forEach var="user" items="${sessionScope.users}">
-                <tr class="info">
-                    <td>${user.name}</td>
-                    <c:choose>
-                        <c:when test="${user.issues_resolved != null}">
-                            <td>${user.issues_resolved}</td>
-                        </c:when>
-                        <c:otherwise>
-                            <td>0</td>
-                        </c:otherwise>
-                    </c:choose>
-                </tr>
-            </c:forEach>
+            <tbody id="tbody">
+            </tbody>
         </table>
     </div>
 </div>

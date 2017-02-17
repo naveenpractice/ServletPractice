@@ -1,10 +1,17 @@
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by naveen-pt1475 on 14-02-2017.
@@ -12,28 +19,20 @@ import java.util.ArrayList;
 @WebServlet(name = "ConversationServ")
 public class ConversationServ extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String user,type,title,priority,status;
-        int id;
-        Issue issue = new Issue();
-        ArrayList<Object> convos;
-        user = request.getParameter("user");
-        type = request.getParameter("type");
-        title = request.getParameter("title");
-        id =  Integer.parseInt(request.getParameter("id"));
-        priority = request.getParameter("priority");
-        status = request.getParameter("status");
-        issue.setUser(user);
-        issue.setType(type);
-        issue.setTitle(title);;
-        issue.setPriority(priority);
-        issue.setId(String.valueOf(id));
-        issue.setStatus(status);
-        request.getSession().setAttribute("issue" , issue);
-        request.getSession().setAttribute("issueid" , id);
-        ConvodbHandler convodbHandler = new ConvodbHandler();
-        convos = convodbHandler.getMessages(id);
-        request.getSession().setAttribute("convos" , convos);
-        response.sendRedirect("/issuedetails.jsp");
+        response.setContentType("application/json");
+        HttpSession session = request.getSession();
+        int issueId = Integer.parseInt(session.getAttribute("id").toString().trim());
+        String userType = session.getAttribute("usertype").toString();
+        Issue issue = new IssuedbHandler().fetchIssueDetails(issueId);
+        List<Conversation> messages = new ConvodbHandler().getMessages(issueId);
+        Map map = new HashMap();
+        map.put("issue", issue);
+        map.put("messages", messages);
+        map.put("userType", userType);
+//        JSONArray jsonArray = new JSONArray();
+//        jsonArray.put(map);
+//        jsonArray.toString();
+//        response.getWriter().write(.toJson(map));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

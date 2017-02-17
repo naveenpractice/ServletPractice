@@ -12,10 +12,43 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#submit").click(function () {
+                var type = $("#type").val()
+                var title = $("#title").val()
+                var product = $("#product").val()
+                var description = $("#description").val()
+                var priority = $("#priority").val()
+                $.post('IssueServ', {
+                    type: type,
+                    title: title,
+                    description: description,
+                    product: product,
+                    priority: priority
+                }, function (json) {
+                    if (json.success == "true") {
+                        window.location.replace("/details.jsp")
+                        alert("Issue added Successfully")
+                    } else
+                        alert("Error");
+                })
+            })
+            $("#back").click(function () {
+                window.location.replace("/details.jsp")
+            })
+        })
+    </script>
 </head>
 <body background="http://bgfons.com/upload/paper_texture327.jpg">
 <div class="container-fluid">
-    <form class="form-horizontal col-md-4" action="IssueServ" method="POST">
+    <div>
+        <button id="back" type="button" class="btn btn-warning btn-sm">
+            <span class="glyphicon glyphicon-chevron-left"></span>BACK
+        </button>
+        <br>
+    </div>
         <div class="form-group">
             <label class="control-label" for="type">Issue Title:</label>
             <div>
@@ -59,12 +92,10 @@
                 </select>
             </div>
         </div>
-        <div class="form-group">
-            <div>
-                <button type="submit" class="btn btn-success">Submit</button>
-            </div>
+        <div>
+            <button id="submit" type="button" class="btn btn-success">Submit</button>
         </div>
-    </form>
+
 </div>
 </body>
 </html>

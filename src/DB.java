@@ -197,6 +197,12 @@ public class DB {
 
         } catch (SQLException e1) {
             e1.printStackTrace();
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (Exception e) {
+            }
         }
         return null;
     }

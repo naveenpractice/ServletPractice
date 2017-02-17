@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class ConvodbHandler {
     DB db = null;
-    private ArrayList<Object> convos;
+    private ArrayList<Conversation> convos;
 
     public boolean addMessage(Conversation conv) {
             db = DB.getInstance();
@@ -17,7 +17,7 @@ public class ConvodbHandler {
             return true;
     }
 
-    public ArrayList<Object> getMessages(int id) {
+    public ArrayList<Conversation> getMessages(int id) {
         Conversation conv;
         int size;
         convos = new ArrayList<>();

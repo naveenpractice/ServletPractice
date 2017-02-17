@@ -1,3 +1,6 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -5,11 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by naveen-pt1475 on 06-02-2017.
@@ -17,57 +17,33 @@ import java.util.TimerTask;
 @WebServlet(name = "LoginServ")
 public class LoginServ extends HttpServlet {
 
-    int count;
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession();
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        Timer timer = new Timer();
-        UserdbHandler userhandler = new UserdbHandler();
-        IssuedbHandler issuehandler = new IssuedbHandler();
-        HttpSession session = request.getSession();
-        boolean valid = userhandler.authenticate(username, password);
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                User user;
-                count++;
-                List<Issue> issues;
-                user = userhandler.fetchUserDetails(username);
-                if (session.getAttribute("user") == null && count > 1) {
-                    System.out.println("SESSION IS NULL");
-                    this.cancel();
-                }
-                System.out.println(request.getSession(false));
-                session.setAttribute("user", user);
-                System.out.println(user.getName());
-                if (user.getType().equals("Customer"))
-                    issues = (ArrayList<Issue>) issuehandler.fetchIssues(username);
-                else {
-                    issues = (ArrayList<Issue>) issuehandler.fetchIssues(null);
-                }
-                session.setAttribute("issues", issues);
-                session.setAttribute("username", username);
-                session.setAttribute("usertype", user.getType());
-                System.out.println("SIZE " + issues.size());
-                System.out.println(count);
 
-            }
-        };
-        if (valid) {
-            timer.scheduleAtFixedRate(timerTask, 0, 30000);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            response.sendRedirect("/staff.jsp");
-        } else
-            out.println("Invalid username/password");
+        boolean valid = new UserdbHandler().authenticate(username, password);
 
+        if (valid)
+            session.setAttribute("username", username);
+
+        Map map;
+        map = new HashMap<>();
+        map.put("user", username);
+        map.put("pass", password);
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(map);
+        jsonObject.put("valid", valid);
+        System.out.println("JSON" + jsonObject);
+        String json = "{\"valid\":\"" + valid + "\"}";
+        response.getWriter().write(json);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 }
